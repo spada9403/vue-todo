@@ -6,8 +6,98 @@
 6. TodoList 컴포넌트 UI 스타일링
 7. TodoList 컴포넌트 할 일 삭제 기능 구현.
 8. TodoList 컴포넌트 할 일 완료 기능 구현.
+9. TodoFooter 컴포넌트 구현 및 현재 앱 구조의 문제점 확인.
+10.할 일 목록 표시 기능 리팩토링
+11.할 일 추가 기능 리팩토링
+12.할 일 삭제 기능 리팩토링
+13.할 일 완료 기능 리팩토링
+14.할 일 모두 삭제 기능 리팩토링
+                            [ 리팩토링 후 애플리케이션 정리 ]
+    각각의 컴포넌트의 데이터와 메서드 들의 관련성이 밀접해서 기존의 데이터와 메서드들을
+    상위 컴포넌트 하나에 모아 모든 데이터를 조작하고 처리하게 만들었다.(컨테이너 컴포넌트)
+    나머지 header, list, footer, input 컴포넌트는 UI와 이벤트의 표현만 해주고, 상위 컴포넌트에게 데이터 변경을 요청함.
+    이러한 방법을 추천한다. => 여러 컴포넌트에 메서드와 데이터가 퍼져있게 되면 복잡한 앱을 구현했을때 데이터의 추적이
+    매우 어려워지기 때문이다.
+15.vue의 장점 -> 트랜지션, 애니메이션 효과를 라이브러리로 지원함. Modal컴포넌트 등록.
+16.slot 의 사용법과 재 정의 방법.
+17.transition 소개 및 사용방법과 구현했을때
+18. ECMAscript6 소개 및 사용하는 이유, Babel 소개 Babel은 ES6 -> ES5로 변환해줌(모든 브라우저 호환성)
+19.속성 메서드와 속성명의 축약 특징 및 리팩토링
+    let obj = {
+        "variable": variable,
+        variable,
+        lookUp: function() {
+            ...
+        },
+        lookup() {
+            ...
+        }
+    }
 
+20.Modules  설명과 Javascript 모듈화 방법
+21.Vuex 소개와 사용 이유
+    Flux패턴 = > action -> Dispatcher -> model -> view -> action 한방향의 데이터 흐름.
+    MVC패턴 => Controler -> Model -> <- View Model과 View 양방향 데이터 흐름.
 
+    Flux (Vuex) 사용 이유 (탄생 이유)
+    MVC 패턴의 문제점 => 많은 Model 과 View 가 서로 상호작용을 하면 데이터의 흐름을 파악하기 매우 힘들고 복잡해진다.
+
+    Vuex가 필요한 이유. Vuex는 Flux패턴을 기반으로 만들어졌다.
+    vue 는 단방향 데이터의 흐름을 만들어 놔서 복잡한 애플리케이션에서 컴포넌트의 개수가 많아지면
+    컴포넌트 간에 데이터 전달이 어려워 진다. 예) 하위컴포넌트 1x번째 -> 1번째 동일 레벨 타 컴포넌트에게 데이터 전달
+    이벤트 버스로 해결? 어렵다
+    이유 => 어디서 이벤트를 보냈는지 혹은 어디서 이벤트를 받았는지 알기 어렵고, 컴포넌트 간 데이터 전달이 명시적이지 않음.
+
+    Vuex로 해결할 수 있는 문제
+    1. MVC 패턴에서 발생하는 구조적 오류
+    2. 컴포넌트 간 데이터 전달 명시
+    3. 여러 개의 컴포넌트에서 같은 데이터를 업데이트 할 때 동기화 문제
+
+    Vuex 컨셉
+        state: 컴포넌트 간에 공유하는 데이터 data()
+        View: 데이터를 표시하는 화면 template
+        Action: 사용자의 입력에 따라 데이터를 변경하는 methods
+        Actions -> State -> View -> Actions
+    Vuex 구조
+        컴포넌트 -> 비동기 로직 -> 동기 로직 -> 상태
+        이벤트발생 -> Actions 메소드 호출 -> Actions 비동기 통신후 mutation 호출 -> mutation메서드에서 state 변경
+22.Vuex 설치 및 기술 요소 설명
+    state: 여러 컴포넌트에 공유되는 데이터 data
+    getters: 연산된 state값을 접근하는 속성 computed
+    mutations: state 값을 변경하는 이벤트 로직, 메서드 methods
+    actions: 비동기 처리 로직을 선언하는 메서드 async methods
+22.Vuex의 state, getters 소개와 state속성 적용
+23.Vuex 의 mutations와 commit() 형식 소개 및 리팩토링 & 퀴즈
+24.퀴즈 풀이 => 모든 methods 를 Vuex store mutations 로 옮기기.
+25.state는 왜 직접변경하지 않고 mutations로 변경하는지 설명.
+    여러개의 컴포넌트에서 state값을 변경하는 경우 어느 컴포넌트에서 어느 시점에
+    해당 state를 변경했는지 추적하기가 어렵다.
+26.vuex 의 actions 설명.
+    actions에서는 비동기처리 로직을 선언하고 commit 으로 mutations에 신호를 보낸다.
+27.왜 actions에 비동기 로직을 선언해야 하는가?
+    언제 어느 컴포넌트에서 해당 state를 호출하고 변경했는지 확인하기가 어려움
+    여러개의 컴포넌트에서 mutations로 시간 차를 두고 state를 변경하는 경우.
+    결론 => state값의 변화를 추적하기 어렵기 때문에 mutations속성에는 동기 처리 로직만 넣어야 한다.
+28.Helper 함수 밑 ES6 Spread 연산자 소개.
+29.mapState, mapGetters 소개 - vuex에 선언한 state속성과 getters속성을 뷰 컴포넌트에 더 쉽게 연결해주는 헬퍼.
+30.getters와 mapGetters 적용하기 (리팩토링)
+    store 에서 getters 선언후 컴포넌트 속성 computed에서 호출하기. (state도 동일)
+31.mepMutations, mapActions 소개 및 헬퍼의 유연한 문법 소개
+    ...mpaMutations([
+        "clickBtn", == 'clickBtn': clickBtn
+        'addNumber' == addNumber(인자) 인자를 선언하지 않아도 자연스럽게 넘겨준다!
+    ])
+    mapMutaions 와 mapActions 는 컴포넌트 methods 속성에 선언한다.
+    methods: {
+        ...mapActions([]) or ({})
+        ...mapMutaions([]) or ({})
+    }
+    **** 인자를 자연스럽게 넘겨주지만, 인자가 2개 이상일 경우엔 인자를 넘겨줄때 {} 로 감싸서 객체하 시켜준다.
+         ex) addNumber({ todoItem, index })
+32.mapMutations 적용 및 퀴즈 (리팩토링)
+33.vuex로 리팩토링한 애플리케이션 구조 분석
+34.스토어 속성 모듈화 방법
+35.스토어 모듈화 방법
 
 style 할떄 view 에서 제공하는 기능 "scoped"
 싱글파일페이지 내에서만 유효한 css로 만든다.
